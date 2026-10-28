@@ -164,12 +164,13 @@ class FollowupTest(unittest.TestCase):
     def test_silent_followup_no_upload_or_second_cue(self):
         def server(p):
             p.normal_hello();self.upload(p);self.answer(p);self.assertEqual(self.receive(p)[0],8)
-        r=self.invoke(server,['--local-wake','--followup-seconds','1'],env_change=self.env(S12_TEST_CAPTURE_SILENT_FROM_GENERATION='2'),interrupt_after=.6)
+        r=self.invoke(server,['--local-wake','--followup-seconds','1'],env_change=self.env(S12_TEST_CAPTURE_SILENT_FROM_GENERATION='2'),interrupt_after=12,stop_on_event=('local_wake_listening',2))
         self.assertEqual(r.returncode,0,r.stderr);events=[json.loads(x) for x in r.stdout.splitlines()]
         self.assertEqual(sum(e['event']=='utterance_uploaded' for e in events),1)
         self.assertEqual(sum(e['event']=='followup_listening' for e in events),1)
         self.assertEqual([e['prompt'] for e in events if e['event']=='local_prompt'],['wake','followup'])
         self.assertIn('local_command_timeout',[e['event'] for e in events])
+        self.assertEqual(sum(e['event']=='local_wake_listening' for e in events),2)
     def test_peer_close_followup_recovers_no_stale_reconnect(self):
         def server(p):
             p.normal_hello();self.upload(p);self.answer(p);time.sleep(.03)
