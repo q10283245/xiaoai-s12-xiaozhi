@@ -1,0 +1,17 @@
+/build/
+/local/
+/dist/
+/sysroot/
+/.private/
+__pycache__/
+*.pyc
+*.arm
+*.img
+*.s12ota
+*.s12app
+*.wav
+*.pcm
+*.opus
+*.so
+*.so.*
+.DS_Store
